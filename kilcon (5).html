@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="google" content="notranslate" />
+<title>KILCON — Construction · Contracting · Consulting</title>
+<meta name="description" content="KILCON udfører byggeprojekter for private og erhvervskunder på hele Sjælland. Praktisk erfaring og god dialog." />
+
+<script>
+  /* Skjul Tailwind CDN's konsol-advarsel (kun denne ene besked). */
+  (function(){
+    var _warn = console.warn;
+    console.warn = function(){
+      if (arguments[0] && String(arguments[0]).indexOf('cdn.tailwindcss.com') !== -1) return;
+      return _warn.apply(console, arguments);
+    };
+  })();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    '#23282A',
+          slate2: '#6B716E',
+          paper:  '#FFFFFF',
+          mist:   '#F3F4F1',
+          mist2:  '#ECEEE9',
+          moss:   '#3F5E47',
+          moss2:  '#344E3B',
+          sage:   '#C3CFC6',
+        },
+        fontFamily: {
+          display: ['Fraunces', 'Georgia', 'serif'],
+          sans:    ['Inter', 'system-ui', 'sans-serif'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root { --moss:#3F5E47; --sage:#C3CFC6; }
+  html { scroll-behavior: smooth; }
+  body { background:#fff; color:#23282A; -webkit-font-smoothing:antialiased; }
+
+  /* ---- Cinematic blur reveal on load ---- */
+  .reveal { filter: blur(22px); opacity:0; transform: scale(1.015); }
+  .reveal.is-ready {
+    filter: blur(0); opacity:1; transform:none;
+    transition: filter 1.4s cubic-bezier(.16,1,.3,1),
+                opacity 1.4s cubic-bezier(.16,1,.3,1),
+                transform 1.6s cubic-bezier(.16,1,.3,1);
+  }
+
+  /* ---- Scroll-in reveals ---- */
+  .rise { opacity:0; transform: translateY(26px); }
+  .rise.in { opacity:1; transform:none; transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
+
+  /* ---- Letter-spacing eyebrow ---- */
+  .eyebrow { letter-spacing:.32em; }
+
+  /* ---- Marquee ---- */
+  .marquee { overflow:hidden; }
+  .marquee__track { display:inline-flex; white-space:nowrap; will-change:transform; animation: scrollx 38s linear infinite; }
+  @keyframes scrollx { from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+
+  /* ---- Inputs: soft green focus glow ---- */
+  .field {
+    background:#fff; border:1px solid #E2E6E0; border-radius:14px;
+    transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .field:focus {
+    outline:none; border-color: var(--moss);
+    box-shadow: 0 0 0 4px rgba(63,94,71,.14);
+    background:#fff;
+  }
+
+  /* ---- Before / After widget ---- */
+  .ba { position:relative; overflow:hidden; border-radius:20px; cursor:ew-resize; touch-action:none; user-select:none; background:#e9ebe7; }
+  .ba img { display:block; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .ba__after { position:absolute; inset:0; }
+  .ba__before { position:absolute; inset:0; width:50%; overflow:hidden; }
+  .ba__before img { position:absolute; inset:0; height:100%; max-width:none; }
+  .ba__line { position:absolute; top:0; bottom:0; left:50%; width:2px; background:#fff; transform:translateX(-1px); box-shadow:0 0 12px rgba(0,0,0,.25); }
+  .ba__grip {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:46px; height:46px; border-radius:999px; background:#fff;
+    display:flex; align-items:center; justify-content:center; gap:3px;
+    box-shadow:0 8px 26px rgba(0,0,0,.28); border:2px solid var(--moss);
+  }
+  .ba__grip i { width:2px; height:14px; background:var(--moss); display:block; border-radius:2px; }
+  .ba__tag { position:absolute; bottom:16px; backdrop-filter:blur(6px); background:rgba(35,40,42,.55); color:#fff; font-size:11px; letter-spacing:.18em; padding:6px 12px; border-radius:999px; }
+
+  /* ---- Modal ---- */
+  .modal { position:fixed; inset:0; z-index:80; display:none; }
+  .modal.open { display:block; }
+  .modal__veil { position:absolute; inset:0; background:rgba(20,24,22,.55); backdrop-filter:blur(8px); opacity:0; transition:opacity .4s ease; }
+  .modal.open .modal__veil { opacity:1; }
+  .modal__panel {
+    position:absolute; inset:0; margin:auto; max-width:780px; width:calc(100% - 2rem);
+    max-height:88vh; overflow-y:auto; background:#fff; border-radius:24px;
+    transform:translateY(30px) scale(.985); opacity:0;
+    transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .5s ease;
+    box-shadow:0 40px 120px rgba(20,30,24,.35);
+  }
+  .modal.open .modal__panel { transform:none; opacity:1; }
+
+  /* ---- Fullscreen project page ---- */
+  .page { position:fixed; inset:0; z-index:95; background:#fff; overflow-y:auto;
+          transform:translateX(100%); opacity:0; visibility:hidden;
+          transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .4s ease, visibility 0s linear .5s; }
+  .page.open { transform:none; opacity:1; visibility:visible; transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .4s ease; }
+
+  /* ---- Fullscreen menu ---- */
+  .menu { position:fixed; inset:0; z-index:90; background:#23282A; color:#fff;
+    transform:translateY(-100%); transition:transform .6s cubic-bezier(.76,0,.24,1); }
+  .menu.open { transform:none; }
+  .menu a { transition:color .3s ease, padding .3s ease; }
+  .menu a:hover { color:var(--sage); padding-left:10px; }
+
+  .link-underline { background-image:linear-gradient(var(--moss),var(--moss)); background-size:0% 1px; background-repeat:no-repeat; background-position:0 100%; transition:background-size .4s ease; }
+  .link-underline:hover { background-size:100% 1px; }
+
+  /* ---- Cookie consent ---- */
+  .ck-overlay { position:fixed; inset:0; z-index:78; background:rgba(20,24,22,.5); backdrop-filter:blur(3px);
+        opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  .ck-overlay.show { opacity:1; pointer-events:auto; }
+  .ck { position:fixed; z-index:79; left:1rem; right:1rem; bottom:1rem; margin:0 auto; max-width:380px;
+        max-height:calc(100dvh - 2rem); display:flex;
+        opacity:0; transform:translateY(24px) scale(.98); pointer-events:none;
+        transition:opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+  .ck.show { opacity:1; transform:none; pointer-events:auto; }
+  .ck__card { display:flex; flex-direction:column; width:100%; max-height:100%;
+        background:#fff; border-radius:20px; border:1px solid #E2E6E0;
+        box-shadow:0 30px 90px rgba(20,30,24,.32); overflow:hidden; }
+  .ck__tabs { display:flex; flex:0 0 auto; border-bottom:1px solid #ECEEE9; }
+  .ck__tab { flex:1; padding:12px 6px; font-size:11px; letter-spacing:.05em; color:#6B716E;
+        background:#fff; border:0; border-bottom:2px solid transparent; cursor:pointer; transition:color .25s, border-color .25s; }
+  .ck__tab[aria-selected="true"] { color:#23282A; border-bottom-color:#3F5E47; font-weight:600; }
+  .ck__body { flex:1 1 auto; min-height:0; overflow-y:auto; padding:16px 18px; }
+  .ck__panel { display:none; }
+  .ck__panel.active { display:block; }
+  .ck__actions { flex:0 0 auto; display:flex; flex-direction:column; gap:7px; padding:12px 18px 16px; border-top:1px solid #ECEEE9; }
+
+  .ck-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:11px 0; border-top:1px solid #F0F2EE; }
+  .ck-row:first-child { border-top:0; }
+  .ck-toggle { position:relative; flex-shrink:0; width:40px; height:22px; border-radius:999px; background:#D7DBD5; border:0; cursor:pointer; transition:background .25s ease; margin-top:2px; }
+  .ck-toggle::after { content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:999px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .25s ease; }
+  .ck-toggle[aria-checked="true"] { background:#3F5E47; }
+  .ck-toggle[aria-checked="true"]::after { transform:translateX(18px); }
+  .ck-toggle[disabled] { opacity:.55; cursor:not-allowed; }
+
+  ::-webkit-scrollbar{ width:10px; } ::-webkit-scrollbar-thumb{ background:#cdd3cd; border-radius:8px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal,.reveal.is-ready,.rise,.rise.in{ transition:none!important; filter:none!important; opacity:1!important; transform:none!important; }
+    .marquee__track{ animation:none; }
+    .modal__veil,.modal__panel{ transition:none; }
+    .ck{ transition:none; }
+    .page{ transition:none; }
+  }
+</style>
+</head>
+
+<body class="reveal font-sans antialiased pb-28">
+
+<!-- ===================== HERO ===================== -->
+<header id="hjem" class="relative h-[100svh] min-h-[620px] w-full overflow-hidden">
+  <video id="heroVideo" class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline preload="auto" poster="">
+    <source src="videobomba.mp4" type="video/mp4" />
+  </video>
+  <!-- graceful fallback tint + scrim -->
+  <div class="absolute inset-0 bg-gradient-to-br from-ink/70 via-ink/45 to-moss/40"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/30"></div>
+
+  <!-- top brand bar -->
+  <div class="absolute top-0 inset-x-0 z-20">
+    <div class="mx-auto max-w-7xl px-6 sm:px-10 py-7 flex items-center justify-between text-white">
+      <a href="#hjem" class="font-display text-2xl tracking-wide">KILCON</a>
+      <p class="hidden sm:block text-[11px] eyebrow uppercase text-white/70">Construction · Contracting · Consulting</p>
+    </div>
+  </div>
+
+  <div class="relative z-10 h-full flex items-center">
+    <div class="mx-auto max-w-7xl w-full px-6 sm:px-10">
+      <div class="max-w-3xl text-white">
+        <p class="eyebrow uppercase text-[12px] sm:text-[13px] text-sage mb-6 rise">Construction — Contracting — Consulting</p>
+        <h1 class="font-display font-light leading-[1.02] text-4xl sm:text-6xl lg:text-7xl rise">
+          Skal vi hjælpe dig med dit byggeprojekt?
+        </h1>
+        <p class="mt-7 text-base sm:text-lg text-white/85 max-w-xl leading-relaxed rise">
+          Hos KILCON tilbyder vi udførsel af byggeprojekter for både private og erhvervskunder.
+        </p>
+        <button data-open-contact class="rise mt-10 inline-flex items-center gap-3 bg-moss hover:bg-moss2 text-white text-sm font-medium px-8 py-4 rounded-full transition-colors">
+          Modtag et tilbud
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/60 text-[11px] eyebrow uppercase">Scroll</div>
+</header>
+
+<!-- ===================== OM / FORDELE ===================== -->
+<section id="om" class="relative bg-paper">
+  <div class="mx-auto max-w-7xl px-6 sm:px-10 py-24 sm:py-32">
+    <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      <!-- image -->
+      <div class="lg:col-span-5 rise">
+        <div class="relative overflow-hidden rounded-3xl aspect-[4/5] bg-mist2">
+          <img src="villaogo.jpg" alt="KILCON byggeprojekt" class="h-full w-full object-cover"
+               onerror="this.style.display='none'">
+          <div class="absolute bottom-5 left-5 right-5 flex items-center justify-between text-white">
+            <span class="text-xs eyebrow uppercase bg-ink/40 backdrop-blur px-3 py-1.5 rounded-full">Sjælland</span>
+          </div>
+        </div>
+      </div>
+      <!-- copy -->
+      <div class="lg:col-span-7 rise">
+        <p class="eyebrow uppercase text-[12px] text-moss mb-5">Om KILCON</p>
+        <h2 class="font-display font-light text-3xl sm:text-5xl leading-[1.05] text-ink max-w-xl">
+          Praktisk erfaring og god dialog
+        </h2>
+        <p class="mt-7 text-slate2 text-base sm:text-lg leading-relaxed max-w-2xl">
+          Med flere års erfaring både entreprenør, ingeniør og bygherre indenfor byggebranchen er KILCON
+          stiftet med henblik på at samle alle byggeriets interessenter omkring oldschool værdier der bygger
+          på god dialog mellem alle interessenter.
+        </p>
+
+        <!-- Hvorfor vælge os -->
+        <p class="mt-14 eyebrow uppercase text-[12px] text-slate2 mb-8">Hvorfor vælge os?</p>
+        <div class="grid sm:grid-cols-2 gap-x-10 gap-y-9">
+          <!-- item -->
+          <div class="flex items-start gap-4 group">
+            <div class="shrink-0 h-16 w-16 rounded-2xl bg-mist flex items-center justify-center ring-1 ring-sage/60 overflow-hidden group-hover:bg-moss/10 transition-colors">
+              <img src="listokarandash.jpg" alt="" class="h-10 w-10 object-contain" loading="lazy" onerror="this.style.display='none'">
+            </div>
+            <p class="text-ink font-medium leading-snug mt-2.5">Projektleder og ingeniør i én</p>
+          </div>
+          <div class="flex items-start gap-4 group">
+            <div class="shrink-0 h-16 w-16 rounded-2xl bg-mist flex items-center justify-center ring-1 ring-sage/60 overflow-hidden group-hover:bg-moss/10 transition-colors">
+              <img src="kluch.jpg" alt="" class="h-10 w-10 object-contain" loading="lazy" onerror="this.style.display='none'">
+            </div>
+            <p class="text-ink font-medium leading-snug mt-2.5">Erfaring fra megaprojekter</p>
+          </div>
+          <div class="flex items-start gap-4 group">
+            <div class="shrink-0 h-16 w-16 rounded-2xl bg-mist flex items-center justify-center ring-1 ring-sage/60 overflow-hidden group-hover:bg-moss/10 transition-colors">
+              <img src="kerameka.jpg" alt="" class="h-10 w-10 object-contain" loading="lazy" onerror="this.style.display='none'">
+            </div>
+            <p class="text-ink font-medium leading-snug mt-2.5">Konkurrencedygtige tilbud</p>
+          </div>
+          <div class="flex items-start gap-4 group">
+            <div class="shrink-0 h-16 w-16 rounded-2xl bg-mist flex items-center justify-center ring-1 ring-sage/60 overflow-hidden group-hover:bg-moss/10 transition-colors">
+              <img src="molnia.jpg" alt="" class="h-10 w-10 object-contain" loading="lazy" onerror="this.style.display='none'">
+            </div>
+            <p class="text-ink font-medium leading-snug mt-2.5">Engageret i oldschool værdier</p>
+          </div>
+        </div>
+
+        <button data-open-contact class="mt-12 inline-flex items-center gap-3 bg-moss hover:bg-moss2 text-white text-sm font-medium px-8 py-4 rounded-full transition-colors">
+          Anmod om tilbud <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BEFORE / AFTER ===================== -->
+<section class="bg-mist">
+  <div class="mx-auto max-w-7xl px-6 sm:px-10 py-24 sm:py-32">
+    <div class="max-w-2xl mb-14 rise">
+      <p class="eyebrow uppercase text-[12px] text-moss mb-5">Før / Efter</p>
+      <h2 class="font-display font-light text-3xl sm:text-5xl leading-[1.05] text-ink">
+        Resultatet taler for sig selv
+      </h2>
+      <p class="mt-5 text-slate2 leading-relaxed">Træk i håndtaget for at sammenligne arbejdet før og efter.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-10">
+      <div class="rise">
+        <div class="ba aspect-[4/3]" data-ba>
+          <div class="ba__after"><img src="after.jpg" alt="Efter" onerror="this.style.opacity=.15"></div>
+          <div class="ba__before"><img src="before.jpg" alt="Før" onerror="this.style.opacity=.3"></div>
+          <div class="ba__line"><div class="ba__grip"><i></i><i></i></div></div>
+          <span class="ba__tag left-4">FØR</span>
+          <span class="ba__tag right-4">EFTER</span>
+        </div>
+      </div>
+      <div class="rise">
+        <div class="ba aspect-[4/3]" data-ba>
+          <div class="ba__after"><img src="after2.jpg" alt="Efter" onerror="this.style.opacity=.15"></div>
+          <div class="ba__before"><img src="before2.jpg" alt="Før" onerror="this.style.opacity=.3"></div>
+          <div class="ba__line"><div class="ba__grip"><i></i><i></i></div></div>
+          <span class="ba__tag left-4">FØR</span>
+          <span class="ba__tag right-4">EFTER</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TESTIMONIAL ===================== -->
+<section id="anmeldelser" class="bg-paper">
+  <div class="mx-auto max-w-5xl px-6 sm:px-10 py-24 sm:py-32">
+    <div class="rise flex flex-col items-center text-center">
+      <div class="flex gap-1.5 text-moss mb-8" aria-label="5 ud af 5 stjerner">
+        <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.3 5.9.85-4.25 4.15 1 5.85L10 15.9 4.75 17.6l1-5.85L1.5 7.65l5.9-.85z"/></svg>
+        <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.3 5.9.85-4.25 4.15 1 5.85L10 15.9 4.75 17.6l1-5.85L1.5 7.65l5.9-.85z"/></svg>
+        <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.3 5.9.85-4.25 4.15 1 5.85L10 15.9 4.75 17.6l1-5.85L1.5 7.65l5.9-.85z"/></svg>
+        <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.3 5.9.85-4.25 4.15 1 5.85L10 15.9 4.75 17.6l1-5.85L1.5 7.65l5.9-.85z"/></svg>
+        <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.3 5.9.85-4.25 4.15 1 5.85L10 15.9 4.75 17.6l1-5.85L1.5 7.65l5.9-.85z"/></svg>
+      </div>
+      <blockquote class="font-display font-light text-2xl sm:text-3xl leading-snug text-ink max-w-3xl">
+        “Vi havde fornøjelsen af at have KILCON som bygherrerådgiver i forbindelse med opførelsen af vores
+        nye hus. KILCON bød ind med optimeringsløsninger i projekteringsfasen der sparede os en del penge.”
+      </blockquote>
+      <div class="mt-9 flex items-center gap-4">
+        <div class="h-12 w-12 rounded-full overflow-hidden bg-mist2 ring-1 ring-sage">
+          <img src="baba.jpg" alt="" class="h-full w-full object-cover" onerror="this.style.display='none'">
+        </div>
+        <p class="text-sm text-slate2">Anonym, Greve, Danmark</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROJEKTER ===================== -->
+<section id="projekter" class="bg-mist">
+  <div class="mx-auto max-w-7xl px-6 sm:px-10 py-24 sm:py-32">
+    <div class="grid lg:grid-cols-12 gap-10 items-end mb-16">
+      <div class="lg:col-span-7 rise">
+        <p class="eyebrow uppercase text-[12px] text-moss mb-5">Seneste projekter</p>
+        <h2 class="font-display font-light text-3xl sm:text-5xl leading-[1.05] text-ink">Referenceprojekter</h2>
+        <p class="mt-6 text-slate2 text-base sm:text-lg leading-relaxed max-w-xl">
+          Vi sætter en ære i både projekteringen og udførslen af projekterne. Her er et udpluk af referenceprojekter.
+        </p>
+        <button data-open-contact class="mt-9 inline-flex items-center gap-3 border border-ink/15 hover:border-moss hover:text-moss text-ink text-sm font-medium px-7 py-3.5 rounded-full transition-colors">
+          Se alle <span aria-hidden="true">→</span>
+        </button>
+      </div>
+      <div class="lg:col-span-5 rise">
+        <div class="overflow-hidden rounded-3xl aspect-[16/10] bg-mist2">
+          <img src="references.jpg" alt="Referenceprojekter" class="h-full w-full object-cover" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+
+    <div id="projectGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"></div>
+  </div>
+</section>
+
+<!-- ===================== KONTAKT (synlig formular nederst) ===================== -->
+<section id="kontakt" class="bg-mist">
+  <div class="mx-auto max-w-3xl px-6 sm:px-10 py-24 sm:py-32">
+    <div class="rise">
+      <p class="eyebrow uppercase text-[12px] text-moss mb-5">Kontakt</p>
+      <h2 class="font-display font-light text-3xl sm:text-5xl leading-[1.05] text-ink">Kontakt os</h2>
+      <p class="mt-5 text-slate2 leading-relaxed">Udfyld formularen, så vender vi tilbage til dig hurtigst muligt.</p>
+      <div class="mt-10 bg-white rounded-3xl ring-1 ring-sage/60 p-7 sm:p-10" data-form-slot></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER / CTA ===================== -->
+<section id="info" class="relative overflow-hidden">
+  <img src="domogo.jpg" alt="" class="absolute inset-0 h-full w-full object-cover" onerror="this.style.display='none'">
+  <div class="absolute inset-0 bg-gradient-to-br from-ink/92 via-ink/85 to-moss2/85"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl px-6 sm:px-10 py-24 sm:py-32 text-white">
+    <div class="max-w-3xl rise">
+      <p class="eyebrow uppercase text-[12px] text-sage mb-6">Vores ydelser</p>
+      <h2 class="font-display font-light text-4xl sm:text-6xl leading-[1.03]">
+        Skal vi hjælpe dig?<br>Modtag et tilbud.
+      </h2>
+      <p class="mt-7 text-white/80 text-base sm:text-lg leading-relaxed max-w-2xl">
+        Construction — Contracting — Consulting. Med KILCON som din partner i byggeprojektet er du garanteret
+        høj faglighed, med sans for kvalitet.
+      </p>
+      <button data-open-contact class="mt-10 inline-flex items-center gap-3 bg-white hover:bg-sage text-ink text-sm font-medium px-8 py-4 rounded-full transition-colors">
+        Modtag et tilbud <span aria-hidden="true">→</span>
+      </button>
+    </div>
+
+    <div class="mt-20 grid sm:grid-cols-3 gap-10 border-t border-white/15 pt-12 rise">
+      <div>
+        <p class="text-[11px] eyebrow uppercase text-white/50 mb-3">Lokation</p>
+        <p class="text-white/90 leading-relaxed">Rosengårdsminde<br>2670 Greve</p>
+        <p class="mt-2 text-white/60 text-sm">Vi dækker hele Sjælland</p>
+      </div>
+      <div>
+        <p class="text-[11px] eyebrow uppercase text-white/50 mb-3">Kontakt os</p>
+        <a href="tel:+4531311967" class="block text-white/90 link-underline w-fit">+45 3131 1967</a>
+        <a href="mailto:ki@kilcon.dk" class="block mt-1 text-white/90 link-underline w-fit">ki@kilcon.dk</a>
+      </div>
+      <div>
+        <p class="text-[11px] eyebrow uppercase text-white/50 mb-3">Følg os</p>
+        <div class="flex gap-3">
+          <!-- Instagram -->
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram" class="h-10 w-10 grid place-items-center rounded-full border border-white/20 hover:border-white hover:bg-white/10 transition-colors">
+            <svg class="h-4.5 w-4.5" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <!-- X -->
+          <a href="#" aria-label="X" class="h-10 w-10 grid place-items-center rounded-full border border-white/20 hover:border-white hover:bg-white/10 transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2H21l-6.4 7.3L22 22h-6.9l-4.4-5.7L5.7 22H3l6.9-7.9L2 2h7l4 5.3zM17 20h1.6L7 4H5.3z"/></svg>
+          </a>
+          <!-- YouTube -->
+          <a href="#" aria-label="YouTube" class="h-10 w-10 grid place-items-center rounded-full border border-white/20 hover:border-white hover:bg-white/10 transition-colors">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 8.2a3 3 0 0 0-2.1-2.1C18 5.5 12 5.5 12 5.5s-6 0-7.9.6A3 3 0 0 0 2 8.2 31 31 0 0 0 1.7 12 31 31 0 0 0 2 15.8a3 3 0 0 0 2.1 2.1c1.9.6 7.9.6 7.9.6s6 0 7.9-.6a3 3 0 0 0 2.1-2.1c.3-1.2.3-3.8.3-3.8s0-2.6-.3-3.8zM10 15V9l5.2 3z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-16 text-white/40 text-xs">© <span id="yr"></span> KILCON · Construction · Contracting · Consulting</p>
+  </div>
+</section>
+
+<!-- ===================== COOKIE CONSENT ===================== -->
+<div id="cookieOverlay" class="ck-overlay"></div>
+<div id="cookie" class="ck" role="dialog" aria-modal="true" aria-label="Cookie-samtykke">
+  <div class="ck__card">
+    <!-- tabs -->
+    <div class="ck__tabs" role="tablist">
+      <button class="ck__tab" role="tab" aria-selected="true"  data-cktab="samtykke">Samtykke</button>
+      <button class="ck__tab" role="tab" aria-selected="false" data-cktab="detaljer">Detaljer</button>
+      <button class="ck__tab" role="tab" aria-selected="false" data-cktab="om">Om</button>
+    </div>
+
+    <div class="ck__body">
+      <!-- Samtykke -->
+      <div class="ck__panel active" data-ckpanel="samtykke">
+        <h3 class="font-display font-light text-xl text-ink mb-3">Denne hjemmeside bruger cookies</h3>
+        <p class="text-[13px] leading-relaxed text-slate2">
+          Vi bruger cookies til at tilpasse vores indhold og annoncer, til at vise dig funktioner til sociale
+          medier og til at analysere vores trafik. Vi deler også oplysninger om din brug af vores hjemmeside
+          med vores partnere inden for sociale medier, annonceringspartnere og analysepartnere. Vi indsamler data
+          i overensstemmelse med Googles Business Data Responsibility Site. Vores partnere kan kombinere disse data
+          med andre oplysninger, du har givet dem, eller som de har indsamlet fra din brug af deres tjenester.
+        </p>
+        <a href="#" class="inline-block mt-4 text-[13px] text-moss font-medium link-underline w-fit">Se Cookie &amp; Privatlivspolitik her</a>
+      </div>
+
+      <!-- Detaljer -->
+      <div class="ck__panel" data-ckpanel="detaljer">
+        <div class="ck-row">
+          <div>
+            <p class="text-sm font-medium text-ink">Nødvendig</p>
+            <p class="mt-1.5 text-[12px] leading-relaxed text-slate2">Nødvendige cookies hjælper med at gøre en hjemmeside brugbar ved at aktivere grundlæggende funktioner såsom side-navigation og adgang til sikre områder af hjemmesiden. Hjemmesiden kan ikke fungere ordentligt uden disse cookies.</p>
+          </div>
+          <button class="ck-toggle" role="switch" aria-checked="true" data-cat="necessary" disabled aria-label="Nødvendig"></button>
+        </div>
+        <div class="ck-row">
+          <div>
+            <p class="text-sm font-medium text-ink">Præferencer</p>
+            <p class="mt-1.5 text-[12px] leading-relaxed text-slate2">Præference cookies gør det muligt for en hjemmeside at huske oplysninger, der ændrer den måde hjemmesiden ser ud eller opfører sig på. F.eks. dit foretrukne sprog, eller den region, du befinder dig i.</p>
+          </div>
+          <button class="ck-toggle" role="switch" aria-checked="false" data-cat="preferences" aria-label="Præferencer"></button>
+        </div>
+        <div class="ck-row">
+          <div>
+            <p class="text-sm font-medium text-ink">Statistik</p>
+            <p class="mt-1.5 text-[12px] leading-relaxed text-slate2">Statistiske cookies giver hjemmesideejere indsigt i brugernes interaktion med hjemmesiden, ved at indsamle og rapportere oplysninger anonymt.</p>
+          </div>
+          <button class="ck-toggle" role="switch" aria-checked="false" data-cat="statistics" aria-label="Statistik"></button>
+        </div>
+        <div class="ck-row">
+          <div>
+            <p class="text-sm font-medium text-ink">Marketing</p>
+            <p class="mt-1.5 text-[12px] leading-relaxed text-slate2">Marketing cookies bruges til at spore brugere på tværs af websites. Hensigten er at vise annoncer, der er relevante og engagerende for den enkelte bruger, og dermed mere værdifulde for udgivere og tredjeparts-annoncører.</p>
+          </div>
+          <button class="ck-toggle" role="switch" aria-checked="false" data-cat="marketing" aria-label="Marketing"></button>
+        </div>
+        <div class="ck-row">
+          <div>
+            <p class="text-sm font-medium text-ink">Uklassificeret</p>
+            <p class="mt-1.5 text-[12px] leading-relaxed text-slate2">Uklassificerede cookies er cookies, som vi er i færd med at klassificere sammen med udbyderne af de enkelte cookies.</p>
+          </div>
+          <button class="ck-toggle" role="switch" aria-checked="false" data-cat="unclassified" aria-label="Uklassificeret"></button>
+        </div>
+        <p class="mt-5 text-[11px] text-slate2/80">Cookiedeklarationen er sidst opdateret d. 10.06.2026 af Cookiebot.</p>
+      </div>
+
+      <!-- Om -->
+      <div class="ck__panel" data-ckpanel="om">
+        <div class="space-y-3 text-[13px] leading-relaxed text-slate2">
+          <p>Cookies er små tekstfiler, som kan bruges af websteder til at gøre en brugers oplevelse mere effektiv.</p>
+          <p>Loven fastslår, at vi kan gemme cookies på din enhed, hvis de er strengt nødvendige for at sikre leveringen af den tjeneste, du udtrykkeligt har anmodet om at bruge. For alle andre typer cookies skal vi indhente dit samtykke.</p>
+          <p>Dette websted bruger forskellige typer af cookies. Nogle cookies sættes af tredjeparts tjenester, der vises på vores sider.</p>
+          <p>Du kan til enhver tid ændre eller tilbagetrække dit samtykke fra Cookiedeklarationen på vores hjemmeside.</p>
+          <p>Få mere at vide om, hvem vi er, hvordan du kan kontakte os, og hvordan vi behandler persondata i vores Privatlivspolitik.</p>
+          <p>Angiv venligst dit samtykke-ID og -dato, når du kontakter os angående dit samtykke.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- actions -->
+    <div class="ck__actions">
+      <button data-ck="all"      class="w-full bg-moss hover:bg-moss2 text-white text-sm font-medium px-6 py-3 rounded-full transition-colors">Tillad alle</button>
+      <button data-ck="selected" class="w-full border border-ink/15 hover:border-moss hover:text-moss text-ink text-sm font-medium px-6 py-3 rounded-full transition-colors">Tillad valgte</button>
+      <button data-ck="reject"   class="w-full text-slate2 hover:text-ink text-sm font-medium px-6 py-2.5 rounded-full transition-colors">Afvis</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== FIXED BOTTOM NAV + MARQUEE ===================== -->
+<div class="fixed bottom-0 inset-x-0 z-[70]">
+  <nav class="mx-auto max-w-md sm:max-w-lg px-3">
+    <div class="mb-2 flex items-center justify-between gap-1 bg-white/90 backdrop-blur-xl border border-sage/60 rounded-full px-2 py-2 shadow-[0_12px_40px_rgba(20,30,24,.18)]">
+      <a href="#hjem" class="flex-1 text-center text-[13px] font-medium text-ink rounded-full py-2.5 hover:bg-mist transition-colors">Hjem</a>
+      <button data-open-contact class="flex-1 text-center text-[13px] font-medium text-ink rounded-full py-2.5 hover:bg-mist transition-colors">Kontakt</button>
+      <a href="tel:+4531311967" class="flex-1 text-center text-[13px] font-medium text-white bg-moss hover:bg-moss2 rounded-full py-2.5 transition-colors">Ring</a>
+      <button id="menuBtn" class="flex-1 text-center text-[13px] font-medium text-ink rounded-full py-2.5 hover:bg-mist transition-colors">Menu</button>
+    </div>
+  </nav>
+  <!-- marquee -->
+  <div class="marquee bg-ink text-white/80 py-2.5">
+    <div class="marquee__track text-[11px] eyebrow uppercase">
+      <span class="flex">
+        <span class="px-6">Construction</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Contracting</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Consulting</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Byggeprojekter</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Ingeniør &amp; entreprenør</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Rådgivning</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Oldschool værdier</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Hele Sjælland</span><span class="text-moss px-1">·</span>
+      </span>
+      <span class="flex" aria-hidden="true">
+        <span class="px-6">Construction</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Contracting</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Consulting</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Byggeprojekter</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Ingeniør &amp; entreprenør</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Rådgivning</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Oldschool værdier</span><span class="text-moss px-1">·</span>
+        <span class="px-6">Hele Sjælland</span><span class="text-moss px-1">·</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== FULLSCREEN MENU ===================== -->
+<div id="menu" class="menu">
+  <div class="mx-auto max-w-7xl px-6 sm:px-10 h-full flex flex-col">
+    <div class="flex items-center justify-between py-7">
+      <span class="font-display text-2xl">KILCON</span>
+      <button id="menuClose" aria-label="Luk menu" class="h-11 w-11 grid place-items-center rounded-full border border-white/25 hover:bg-white/10 transition-colors">✕</button>
+    </div>
+    <nav class="flex-1 flex flex-col justify-center gap-3 font-display font-light text-4xl sm:text-6xl">
+      <a href="#hjem" data-menu-link>Hjem</a>
+      <a href="#om" data-menu-link>Om os</a>
+      <a href="#projekter" data-menu-link>Projekter</a>
+      <a href="#anmeldelser" data-menu-link>Anmeldelser</a>
+      <a href="#kontakt" data-menu-link>Kontakt</a>
+    </nav>
+    <div class="py-8 text-white/50 text-sm flex flex-wrap gap-x-8 gap-y-2">
+      <span>+45 3131 1967</span><span>ki@kilcon.dk</span><span>2670 Greve · Sjælland</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CONTACT MODAL ===================== -->
+<div id="contactModalRemoved" hidden></div>
+
+<!-- ===================== PROJEKT-SIDE (fuld side) ===================== -->
+<div id="projectPage" class="page" role="dialog" aria-modal="true" aria-label="Projekt">
+  <header class="sticky top-0 z-20 bg-white/90 backdrop-blur-xl border-b border-sage/50">
+    <div class="mx-auto max-w-3xl px-6 sm:px-10 py-4 flex items-center justify-between">
+      <button data-close class="inline-flex items-center gap-2 text-sm font-medium text-ink hover:text-moss transition-colors">
+        <span aria-hidden="true">←</span> Tilbage
+      </button>
+      <span class="font-display text-xl tracking-wide">KILCON</span>
+    </div>
+  </header>
+
+  <article class="mx-auto max-w-3xl px-6 sm:px-10 pb-32">
+    <div class="relative mt-8 h-64 sm:h-80 bg-mist2 rounded-3xl overflow-hidden">
+      <img id="pmImg" src="" alt="" class="h-full w-full object-cover" onerror="this.style.display='none'">
+      <div class="absolute inset-0 bg-gradient-to-t from-ink/55 to-transparent"></div>
+    </div>
+
+    <h1 id="pmTitle" class="mt-10 font-display font-light text-4xl sm:text-5xl text-ink"></h1>
+    <p id="pmDate" class="mt-3 text-[11px] eyebrow uppercase text-slate2"></p>
+    <div id="pmBody" class="mt-8 space-y-5 text-slate2 text-base sm:text-lg leading-relaxed"></div>
+    <p id="pmCat" class="mt-10 inline-block text-[11px] eyebrow uppercase text-slate2 bg-mist px-3 py-1.5 rounded-full"></p>
+
+    <div class="mt-16 pt-12 border-t border-sage/60">
+      <p class="eyebrow uppercase text-[12px] text-moss mb-3">Kontakt</p>
+      <h2 class="font-display font-light text-3xl text-ink mb-2">Anmod om tilbud</h2>
+      <p class="text-slate2 mb-8">Udfyld formularen, så vender vi tilbage til dig.</p>
+      <div data-form-slot></div>
+    </div>
+  </article>
+</div>
+
+<script>
+/* ---------- Year ---------- */
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ---------- Hero video: force autoplay (some browsers need a nudge) ---------- */
+(function(){
+  const v = document.getElementById('heroVideo');
+  if(!v) return;
+  v.muted = true;
+  const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(()=>{}); };
+  tryPlay();
+  v.addEventListener('canplay', tryPlay, { once:true });
+  document.addEventListener('click', tryPlay, { once:true });
+})();
+
+/* ---------- Blur reveal on load ---------- */
+window.addEventListener('load', () => {
+  requestAnimationFrame(() => document.body.classList.add('is-ready'));
+});
+
+/* ---------- Scroll-in reveals ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+}, { threshold:.16 });
+document.querySelectorAll('.rise').forEach(el => io.observe(el));
+
+/* ---------- Contact form template ---------- */
+function contactFormHTML(idns){
+  return `
+  <form class="space-y-4" novalidate>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs text-slate2 mb-1.5" for="${idns}-fornavn">Fornavn</label>
+        <input id="${idns}-fornavn" name="fornavn" type="text" class="field w-full px-4 py-3 text-sm" autocomplete="given-name">
+      </div>
+      <div>
+        <label class="block text-xs text-slate2 mb-1.5" for="${idns}-efternavn">Efternavn</label>
+        <input id="${idns}-efternavn" name="efternavn" type="text" class="field w-full px-4 py-3 text-sm" autocomplete="family-name">
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs text-slate2 mb-1.5" for="${idns}-tlf">Telefonnummer</label>
+        <input id="${idns}-tlf" name="telefon" type="tel" class="field w-full px-4 py-3 text-sm" autocomplete="tel">
+      </div>
+      <div>
+        <label class="block text-xs text-slate2 mb-1.5" for="${idns}-email">Email</label>
+        <input id="${idns}-email" name="email" type="email" class="field w-full px-4 py-3 text-sm" autocomplete="email">
+      </div>
+    </div>
+    <div>
+      <label class="block text-xs text-slate2 mb-1.5" for="${idns}-besked">Besked</label>
+      <textarea id="${idns}-besked" name="besked" rows="4" class="field w-full px-4 py-3 text-sm resize-none"></textarea>
+    </div>
+    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-moss hover:bg-moss2 text-white text-sm font-medium px-8 py-3.5 rounded-full transition-colors">
+      Send besked <span aria-hidden="true">→</span>
+    </button>
+    <p data-success class="hidden text-sm text-moss">Tak! Vi vender tilbage hurtigst muligt.</p>
+  </form>`;
+}
+function wireForm(scope){
+  const form = scope.querySelector('form');
+  if(!form) return;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ok = scope.querySelector('[data-success]');
+    if(ok){ ok.classList.remove('hidden'); }
+    form.reset();
+  });
+}
+
+/* ---------- Inject contact form into the visible bottom section ---------- */
+document.querySelectorAll('#kontakt [data-form-slot]').forEach((slot,i) => {
+  slot.innerHTML = contactFormHTML('km'+i);
+  wireForm(slot);
+});
+
+/* ---------- CTA buttons -> scroll to the bottom contact form ---------- */
+function scrollToKontakt(){
+  const k = document.getElementById('kontakt');
+  k.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+document.querySelectorAll('[data-open-contact]').forEach(b => b.addEventListener('click', scrollToKontakt));
+
+/* ---------- Projects data ---------- */
+const projects = [
+  { img:'stena1.png', title:'Opførsel af 198m2 parcelhus', date:'27. januar 2025', cat:'Ikke-kategoriseret',
+    paras:[
+      'KilCon blev grundlagt i 2025 med det formål at levere førsteklasses rådgivning inden for virksomhedsledelse. Vores team af erfarne konsulenter er dedikeret til at hjælpe virksomheder med at nå deres mål og opnå succes på et konkurrencepræget marked.',
+      'Hos KilCon skræddersyr vi vores rådgivning til de specifikke behov hos hver enkelt kunde. Vi samarbejder tæt med vores klienter for at forstå deres forretningsudfordringer og udvikle skræddersyede løsninger, der leverer målbare resultater.',
+      'Vores tjenester omfatter strategiudvikling, organisatorisk design, procesoptimering, risikostyring og vækststrategier. Vores tilgang er baseret på en dyb forståelse af forretningsprincipper og en passion for at hjælpe virksomheder med at trives.',
+      'Kontakt KilCon i dag for at få mere at vide om vores omfattende udvalg af rådgivningstjenester. Vores team af eksperter står klar til at samarbejde med dig om at skabe en succesfuld fremtid for din virksomhed.'
+    ] },
+  { img:'stena2.png', title:'Renovering', date:'27. januar 2025', cat:'Ikke-kategoriseret',
+    paras:[
+      'Velkommen til KilCon, førende inden for rådgivning i særklasse. Grundlagt i 2025, har vi stræbt efter at give vores kunder exceptionelle løsninger til at forbedre deres forretningspraksisser.',
+      'Vores team af erfarne konsulenter har en dybtgående forståelse af de unikke udfordringer, som virksomheder står over for i dagens dynamiske erhvervsklima. Vi tilbyder skræddersyede rådgivningstjenester, der tager højde for de særlige behov og mål for hver kunde.',
+      'Hos KilCon er vi dedikeret til at hjælpe vores kunder med at nå deres fulde potentiale. Vores rådgivning dækker en lang række emner, herunder strategisk planlægning, driftsforbedring og talentudvikling.',
+      'Kontakt KilCon i dag og lad os vise dig, hvordan vores ekspertvejledning kan føre din virksomhed til nye højder af succes!'
+    ] },
+  { img:'stena3.png', title:'Tilbygning', date:'27. januar 2025', cat:'Ikke-kategoriseret',
+    paras:[
+      'Velkommen til KilCon, din betroede rådgiver inden for virksomhedsledelse. Grundlagt i 2025 er vi dedikeret til at hjælpe virksomheder med at nå deres fulde potentiale ved at levere skræddersyet rådgivning i særklasse.',
+      'Vores team består af erfarne fagfolk med dybdegående viden om alle aspekter af forretningsdrift. Fra strategisk planlægning til operationel effektivitet og finansiel forvaltning har vi den ekspertise, der skal til for at hjælpe dig med at overvinde udfordringer og opnå dine målsætninger.',
+      'Vi forstår, at hver virksomhed er unik, og vi tager os tid til at lære dit specifikke miljø at kende. Dette gør det muligt for os at levere personlige løsninger, der er skræddersyet til dine behov og understøtter dit vækstpotentiale.',
+      'Kontakt os i dag for at planlægge en uforpligtende samtale og opdag, hvordan KilCon kan hjælpe din virksomhed med at nå nye højder af succes.'
+    ] },
+];
+
+/* ---------- Render project cards ---------- */
+const grid = document.getElementById('projectGrid');
+projects.forEach((p, idx) => {
+  const card = document.createElement('button');
+  card.className = 'group text-left bg-white rounded-3xl overflow-hidden ring-1 ring-sage/50 hover:ring-moss/60 transition-all hover:-translate-y-1 rise';
+  card.innerHTML = `
+    <div class="relative aspect-[4/3] bg-mist2 overflow-hidden">
+      <img src="${p.img}" alt="${p.title}" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.style.opacity=.15">
+      <span class="absolute top-4 left-4 text-[10px] eyebrow uppercase bg-white/85 backdrop-blur text-ink px-3 py-1.5 rounded-full">${p.cat}</span>
+    </div>
+    <div class="p-6">
+      <p class="text-[11px] eyebrow uppercase text-slate2 mb-2">${p.date}</p>
+      <h3 class="font-display font-light text-xl text-ink leading-snug">${p.title}</h3>
+      <span class="mt-4 inline-flex items-center gap-2 text-sm text-moss font-medium">Læs mere <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span></span>
+    </div>`;
+  card.addEventListener('click', () => openProject(idx));
+  grid.appendChild(card);
+  io.observe(card);
+});
+
+/* ---------- Open project as a full page (with back navigation) ---------- */
+const pm = document.getElementById('projectPage');
+let pageOpen = false;
+
+function renderProject(i){
+  const p = projects[i];
+  pm.querySelector('#pmImg').src = p.img;
+  pm.querySelector('#pmImg').alt = p.title;
+  pm.querySelector('#pmTitle').textContent = p.title;
+  pm.querySelector('#pmDate').textContent = p.date;
+  pm.querySelector('#pmCat').textContent = p.cat;
+  const bodyEl = pm.querySelector('#pmBody');
+  bodyEl.innerHTML = '';
+  p.paras.forEach(txt => {
+    const para = document.createElement('p');
+    para.textContent = txt;
+    bodyEl.appendChild(para);
+  });
+  const slot = pm.querySelector('[data-form-slot]');
+  slot.innerHTML = contactFormHTML('pm'+i);
+  wireForm(slot);
+}
+
+function openProject(i){
+  renderProject(i);
+  pm.classList.add('open');
+  pm.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  pageOpen = true;
+  if (location.hash !== '#projekt-' + i) history.pushState({ project:i }, '', '#projekt-' + i);
+}
+
+function closeProject(fromPop){
+  if (!pageOpen) return;
+  pm.classList.remove('open');
+  document.body.style.overflow = '';
+  pageOpen = false;
+  if (!fromPop && location.hash.indexOf('#projekt-') === 0) history.back();
+}
+
+pm.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeProject(false)));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pageOpen) closeProject(false); });
+window.addEventListener('popstate', () => { if (location.hash.indexOf('#projekt-') !== 0) closeProject(true); });
+
+/* ---------- Fullscreen menu ---------- */
+const menu = document.getElementById('menu');
+document.getElementById('menuBtn').addEventListener('click', () => { menu.classList.add('open'); document.body.style.overflow='hidden'; });
+function closeMenu(){ menu.classList.remove('open'); document.body.style.overflow=''; }
+document.getElementById('menuClose').addEventListener('click', closeMenu);
+document.querySelectorAll('[data-menu-link]').forEach(a => a.addEventListener('click', closeMenu));
+
+/* ---------- Cookie consent ---------- */
+(function(){
+  const ck = document.getElementById('cookie');
+  const ov = document.getElementById('cookieOverlay');
+  const KEY = 'kilcon_cookie_consent';
+
+  // skip if already chosen (persists on the real hosted site; safely ignored in sandbox)
+  let stored = null;
+  try { stored = localStorage.getItem(KEY); } catch(e) {}
+  if (stored) { ck.remove(); ov.remove(); return; }
+
+  // show ~0.5s after the site is ready, block the rest of the page until a choice is made
+  function showCookie(){
+    setTimeout(() => {
+      ov.classList.add('show');
+      ck.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }, 500);
+  }
+  if (document.readyState === 'complete') showCookie();
+  else window.addEventListener('load', showCookie);
+
+  // tabs
+  ck.querySelectorAll('[data-cktab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      ck.querySelectorAll('[data-cktab]').forEach(t => t.setAttribute('aria-selected','false'));
+      tab.setAttribute('aria-selected','true');
+      const name = tab.dataset.cktab;
+      ck.querySelectorAll('[data-ckpanel]').forEach(p => p.classList.toggle('active', p.dataset.ckpanel === name));
+      ck.querySelector('.ck__body').scrollTop = 0;
+    });
+  });
+
+  // toggles
+  ck.querySelectorAll('.ck-toggle:not([disabled])').forEach(t => {
+    t.addEventListener('click', () => {
+      t.setAttribute('aria-checked', t.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+    });
+  });
+
+  function readConsent(){
+    const out = {};
+    ck.querySelectorAll('.ck-toggle').forEach(t => { out[t.dataset.cat] = t.getAttribute('aria-checked') === 'true'; });
+    return out;
+  }
+  function save(consent){
+    try { localStorage.setItem(KEY, JSON.stringify({ consent, date: new Date().toISOString() })); } catch(e) {}
+    ck.classList.remove('show');
+    ov.classList.remove('show');
+    document.body.style.overflow = '';
+    setTimeout(() => { ck.remove(); ov.remove(); }, 600);
+  }
+
+  ck.querySelector('[data-ck="all"]').addEventListener('click', () => {
+    ck.querySelectorAll('.ck-toggle:not([disabled])').forEach(t => t.setAttribute('aria-checked','true'));
+    save(readConsent());
+  });
+  ck.querySelector('[data-ck="selected"]').addEventListener('click', () => save(readConsent()));
+  ck.querySelector('[data-ck="reject"]').addEventListener('click', () => {
+    ck.querySelectorAll('.ck-toggle:not([disabled])').forEach(t => t.setAttribute('aria-checked','false'));
+    save({ necessary:true, preferences:false, statistics:false, marketing:false, unclassified:false });
+  });
+})();
+
+document.querySelectorAll('[data-ba]').forEach(ba => {
+  const before = ba.querySelector('.ba__before');
+  const beforeImg = before.querySelector('img');
+  const line = ba.querySelector('.ba__line');
+  let dragging = false;
+
+  function sizeImg(){ beforeImg.style.width = ba.clientWidth + 'px'; }
+  function setPos(clientX){
+    const r = ba.getBoundingClientRect();
+    let x = (clientX - r.left) / r.width;
+    x = Math.max(0, Math.min(1, x));
+    const pct = x * 100;
+    before.style.width = pct + '%';
+    line.style.left = pct + '%';
+  }
+  sizeImg();
+  window.addEventListener('resize', sizeImg);
+
+  ba.addEventListener('pointerdown', (e) => { dragging = true; ba.setPointerCapture(e.pointerId); setPos(e.clientX); });
+  ba.addEventListener('pointermove', (e) => { if(dragging) setPos(e.clientX); });
+  ba.addEventListener('pointerup',   () => dragging = false);
+  ba.addEventListener('pointercancel',() => dragging = false);
+});
+</script>
+</body>
+</html>
